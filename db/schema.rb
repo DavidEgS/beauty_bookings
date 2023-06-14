@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[7.0].define(version: 0) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_14_112027) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,7 +20,33 @@ ActiveRecord::Schema[7.0].define(version: 0) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "service_id", null: false
+    t.index ["service_id"], name: "index_appointments_on_service_id"
     t.index ["user_id"], name: "index_appointments_on_user_id"
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.string "specialty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.bigint "department_id", null: false
+    t.string "name"
+    t.integer "timing"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["department_id"], name: "index_services_on_department_id"
+  end
+
+  create_table "user_departments", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "department_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["department_id"], name: "index_user_departments_on_department_id"
+    t.index ["user_id"], name: "index_user_departments_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -36,5 +61,9 @@ ActiveRecord::Schema[7.0].define(version: 0) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "appointments", "services"
   add_foreign_key "appointments", "users"
+  add_foreign_key "services", "departments"
+  add_foreign_key "user_departments", "departments"
+  add_foreign_key "user_departments", "users"
 end
