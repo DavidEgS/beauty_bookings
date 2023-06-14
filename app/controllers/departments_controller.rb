@@ -1,0 +1,3 @@
+class DepartmentsController < ApplicationController
+
+end
